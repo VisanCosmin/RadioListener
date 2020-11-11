@@ -1,0 +1,265 @@
+[
+   {
+      "stream":"https://live7digi.antenaplay.ro/radiozu/radiozu-48000.m3u8",
+      "name":"Radio ZU",
+      "logo":"//cdn.onlineradiobox.com/img/logo/3/18773.v11.png",
+      "tags":[
+         "r'n'b",
+         "pop",
+         "news",
+         "hip-hop",
+         "top40"
+      ]
+   },
+   {
+      "stream":"https://astreaming.edi.ro:8443/EuropaFM_aac",
+      "name":"Europa FM",
+      "logo":"//cdn.onlineradiobox.com/img/logo/9/18789.v10.png",
+      "tags":[
+         "pop",
+         "news",
+         "top40"
+      ]
+   },
+   {
+      "stream":"https://onlineradiobox.com/json/ro/radiocafe/play?platform=web",
+      "name":"Radio Cafe",
+      "logo":"//cdn.onlineradiobox.com/img/logo/1/19041.v3.png",
+      "tags":[
+         "rock",
+         "pop",
+         "top40",
+         "oldies"
+      ]
+   },
+   {
+      "stream":"https://live.magicfm.ro:8443/magicfm.aacp",
+      "name":"Magic FM",
+      "logo":"//cdn.onlineradiobox.com/img/logo/3/18743.v9.png",
+      "tags":[
+         "pop",
+         "news",
+         "top40"
+      ]
+   },
+   {
+      "stream":"https://live.kissfm.ro:8443/kissfm.aacp",
+      "name":"Kiss FM",
+      "logo":"//cdn.onlineradiobox.com/img/logo/2/18742.v12.png",
+      "tags":[
+         "rock",
+         "pop",
+         "news",
+         "top40"
+      ]
+   },
+   {
+      "stream":"https://astreaming.edi.ro:8443/VirginRadio_aac",
+      "name":"Virgin Radio (Radio 21)",
+      "logo":"//cdn.onlineradiobox.com/img/logo/6/18776.v6.png",
+      "tags":[
+         "r'n'b",
+         "pop",
+         "news",
+         "top40"
+      ]
+   },
+   {
+      "stream":"https://onlineradiobox.com/json/ro/manele/play?platform=web",
+      "name":"Radio Manele",
+      "logo":"//cdn.onlineradiobox.com/img/logo/6/18836.v17.png",
+      "tags":[
+         "pop",
+         "news",
+         "folk"
+      ]
+   },
+   {
+      "stream":"https://onlineradiobox.com/json/ro/digifm/play?platform=web",
+      "name":"Digi FM",
+      "logo":"//cdn.onlineradiobox.com/img/logo/7/19147.v3.png",
+      "tags":[
+         "pop",
+         "news",
+         "talk",
+         "top40"
+      ]
+   },
+   {
+      "stream":"https://onlineradiobox.com/json/ro/focus/play?platform=web",
+      "name":"Radio Focus",
+      "logo":"//cdn.onlineradiobox.com/img/logo/7/64767.v5.png",
+      "tags":[
+         "news",
+         "90s",
+         "00s",
+         "80s",
+         "culture",
+         "10s"
+      ]
+   },
+   {
+      "stream":"https://onlineradiobox.com/json/ro/petrecaretzu/play?platform=web",
+      "name":"Radio Petrecaretzu",
+      "logo":"//cdn.onlineradiobox.com/img/logo/7/64497.v6.png",
+      "tags":[
+         "pop",
+         "talk",
+         "folk"
+      ]
+   },
+   {
+      "stream":"https://live.radio-impuls.ro/stream",
+      "name":"Radio Impuls",
+      "logo":"//cdn.onlineradiobox.com/img/logo/5/18785.v7.png",
+      "tags":[
+         "pop",
+         "news",
+         "talk",
+         "top40"
+      ]
+   },
+   {
+      "stream":"https://ivm.antenaplay.ro/liveaudio/radioromantic/playlist.m3u8",
+      "name":"Romantic FM",
+      "logo":"//cdn.onlineradiobox.com/img/logo/6/18956.v6.png",
+      "tags":[
+         "romantic"
+      ]
+   },
+   {
+      "stream":"https://onlineradiobox.com/json/ro/dancefm/play?platform=web",
+      "name":"Dance FM ",
+      "logo":"//cdn.onlineradiobox.com/img/logo/5/19025.v8.png",
+      "tags":[
+         "dance",
+         "trance",
+         "house",
+         "pop"
+      ]
+   },
+   {
+      "stream":"https://onlineradiobox.com/json/ro/romniaactualiti/play?platform=web",
+      "name":"Radio România Actualități",
+      "logo":"//cdn.onlineradiobox.com/img/logo/3/18683.v8.png",
+      "tags":[
+         "pop",
+         "news",
+         "talk"
+      ]
+   },
+   {
+      "stream":"https://live.playradio.org:8443/90HD",
+      "name":"Play 90's",
+      "logo":"//cdn.onlineradiobox.com/img/logo/2/18932.v13.png",
+      "tags":[
+         "dance",
+         "electronic",
+         "90s"
+      ]
+   },
+   {
+      "stream":"https://onlineradiobox.com/json/ro/infopro/play?platform=web",
+      "name":"ProFM",
+      "logo":"//cdn.onlineradiobox.com/img/logo/2/18792.v7.png",
+      "tags":[
+         "rock",
+         "r'n'b",
+         "pop",
+         "hip-hop",
+         "adult contemporary"
+      ]
+   },
+   {
+      "stream":"https://live.rockfm.ro:8443/rockfm.aacp",
+      "name":"Rock FM",
+      "logo":"//cdn.onlineradiobox.com/img/logo/8/19218.v6.png",
+      "tags":[
+         "rock",
+         "metal",
+         "hard-core"
+      ]
+   },
+   {
+      "stream":"https://stream.adradio.ro/doctorfm",
+      "name":"Doctor FM",
+      "logo":"//cdn.onlineradiobox.com/img/logo/6/19766.v3.png",
+      "tags":[
+         "pop",
+         "romantic"
+      ]
+   },
+   {
+      "stream":"https://liveonline.realitatea.net/livertmp/plus_aac/playlist.m3u8",
+      "name":"Realitatea FM",
+      "logo":"//cdn.onlineradiobox.com/img/logo/6/64786.v7.png",
+      "tags":[
+         "rock",
+         "pop",
+         "news",
+         "90s",
+         "adult contemporary"
+      ]
+   },
+   {
+      "stream":"https://dedicat.fmradiomanele.ro/8000/stream",
+      "name":"Radio Petrecere",
+      "logo":"//cdn.onlineradiobox.com/img/logo/8/64518.v13.png",
+      "tags":[
+         "pop",
+         "folk"
+      ]
+   },
+   {
+      "stream":"https://onlineradiobox.com/json/ro/bucurestifm/play?platform=web",
+      "name":"Bucuresti FM",
+      "logo":"//cdn.onlineradiobox.com/img/logo/6/19096.v17.png",
+      "tags":[
+         "pop",
+         "news",
+         "talk",
+         "top40"
+      ]
+   },
+   {
+      "stream":"https://astreaming.edi.ro:8443/VibeFM_aac",
+      "name":"Vibe FM",
+      "logo":"//cdn.onlineradiobox.com/img/logo/2/18902.v5.png",
+      "tags":[
+         "rock",
+         "pop",
+         "oldies"
+      ]
+   },
+   {
+      "stream":"https://onlineradiobox.com/json/ro/greudedifuzat/play?platform=web",
+      "name":"Radio Greu De Difuzat",
+      "logo":"//cdn.onlineradiobox.com/img/logo/8/64968.v4.png",
+      "tags":[
+         "rap",
+         "hip-hop"
+      ]
+   },
+   {
+      "stream":"https://onlineradiobox.com/json/ro/city/play?platform=web",
+      "name":"City Rádió",
+      "logo":"//cdn.onlineradiobox.com/img/logo/1/47671.v1.png",
+      "tags":[
+         "pop",
+         "news",
+         "talk",
+         "entertainment"
+      ]
+   },
+   {
+      "stream":"https://live.radioprob.ro:9999/;",
+      "name":"Radio Pro-B",
+      "logo":"//cdn.onlineradiobox.com/img/logo/3/18933.v3.png",
+      "tags":[
+         "trance",
+         "house",
+         "lounge",
+         "chill-out"
+      ]
+   }
+]
