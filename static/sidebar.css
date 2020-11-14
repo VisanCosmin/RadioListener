@@ -1,0 +1,134 @@
+.panel{
+    width: 100%;
+    height: 500px;
+    background-color: #F5F5F5;
+    border: 1px solid rgba(255,255,255,0.20);
+    border-radius: 10px;
+    box-shadow: 1px 1px 7px 0 rgba(217,210,200,0.51);
+    margin: 10px 30px;
+}
+.favorite-stations{
+    height: 85%;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 15px;
+    overflow-y: hidden;
+    padding-bottom: 50px;
+}
+.favorite-stations > h2{
+    font-size: 17px;
+    font-weight: 900;
+    text-transform: uppercase;
+    margin: 0;
+    margin-bottom: 15px;
+    color: #454568;
+}
+.stations-list{
+    width: 100%;
+    height: 100%;
+    overflow-y: hidden;
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+}
+.favorite-item{
+    display: flex;
+    flex-direction: row;
+    justify-items: center;
+    margin: 5px 0;
+}
+.favorite-item > img{
+    width: 40px;
+    height: 40px;
+    background-color: #DEDDDD;
+    border-radius: 4px;
+    object-fit: contain;
+}
+.favorite-item > h2{
+    font-size: 15px;
+    margin: auto 0;
+    margin-left: 10px;
+    color: #454568;
+    width: auto;
+}
+.favorite-item .play{
+    margin-top: 10px;
+    margin-right: 10px;
+    padding: 2px 8px;
+    font-size: 13px;
+    font-weight: 900;
+    background-color: #DEDDDD;
+    background-color: #E5E4E4;
+    border-radius: 5px;
+    color: #777777;
+    color: #AAAAAA;
+    cursor: pointer;
+    height: 18px;
+    margin-left: auto;
+}
+.favorite-item .play:hover{
+    background-color: #7db6ff;
+    color: white;
+    box-shadow: 0px 0px 10px -2px rgba(125,187,237,1);
+}
+.player{
+    height: 15%;
+    width: 100%;
+    border-top: 3px solid #BBBBBB;
+    display: flex;
+    flex-direction: row;
+}
+.player-play{
+    height: 40px;
+    width: 40px;
+    border-radius: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 15px;
+    background-color: #FAFAFA;
+    border: 2px solid #CFCFCF;
+    border-radius: 50px;
+    background: #f2f2f2;
+    box-shadow:  5px 5px 9px #cecece, 
+                -5px -5px 9px #ffffff;
+    
+    line-height: 40px;
+    cursor: pointer;
+}
+.player-play > span{
+    text-align: center;
+    vertical-align: middle;
+    line-height: 40px;
+    margin: auto;
+    padding-left: 2px;
+    color: #555555;
+}
+.player-favorite{
+    width: 20px;
+    margin: auto 0;
+    color: #777777;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 25px;
+    cursor: pointer;
+    min-width: 20%;
+}
+.player-favorite:hover{
+    color: rgba(255,0,0,0.6);
+    text-shadow: 0px 0px 10px 0px rgba(237,100,100,1);
+}
+.player-info{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-grow: 2;
+}
+.player-info > h2{
+    font-size: 15px;
+    margin: 0;
+    color: #454568;
+}
+.player-info > input{
+    width: 150px;
+}

@@ -3,15 +3,29 @@
     <head>
         <meta charset="UTF-8">
         <title>Main</title>
-        <link rel="stylesheet" href="whatever-you-want.css">
+        <link rel="stylesheet" href="static/main.css">
+        <link rel="stylesheet" href="static/card.css">
+        <link rel="stylesheet" href="static/sidebar.css">
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&amp;display=swap" rel="stylesheet">
+
         <script src="main.js"></script>
     </head>
     <body>
         <pre id="elm-node"></pre>
         <script>
-            Elm.Main.init({
+            var app = Elm.Main.init({
                 node: document.getElementById("elm-node")
-            })
+            });
+
+            app.ports.playerPlay.subscribe(function() {
+                var audio = document.getElementById("audio-player");
+                audio.play();
+            });
+
+            app.ports.playerPause.subscribe(function() {
+                var audio = document.getElementById("audio-player");
+                audio.pause();
+            });
         </script>
     </body>
 </html>

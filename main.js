@@ -5319,6 +5319,7 @@ var $elm$core$Task$perform = F2(
 				A2($elm$core$Task$map, toMessage, task)));
 	});
 var $elm$browser$Browser$element = _Browser_element;
+var $author$project$Main$Paused = {$: 'Paused'};
 var $author$project$Main$RequestStationsResult = function (a) {
 	return {$: 'RequestStationsResult', a: a};
 };
@@ -6129,7 +6130,7 @@ var $author$project$Main$stationDecoder = A5(
 		$elm$json$Json$Decode$list($elm$json$Json$Decode$string)));
 var $author$project$Main$init = function (_v0) {
 	return _Utils_Tuple2(
-		{currentStation: $elm$core$Maybe$Nothing, stations: _List_Nil},
+		{allStations: _List_Nil, currentStation: $elm$core$Maybe$Nothing, playerState: $author$project$Main$Paused, stations: _List_Nil},
 		$elm$http$Http$get(
 			{
 				expect: A2(
@@ -6141,8 +6142,69 @@ var $author$project$Main$init = function (_v0) {
 };
 var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
+var $author$project$Main$Playing = {$: 'Playing'};
+var $elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			$elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
+	});
+var $elm$core$List$any = F2(
+	function (isOkay, list) {
+		any:
+		while (true) {
+			if (!list.b) {
+				return false;
+			} else {
+				var x = list.a;
+				var xs = list.b;
+				if (isOkay(x)) {
+					return true;
+				} else {
+					var $temp$isOkay = isOkay,
+						$temp$list = xs;
+					isOkay = $temp$isOkay;
+					list = $temp$list;
+					continue any;
+				}
+			}
+		}
+	});
+var $elm$core$List$member = F2(
+	function (x, xs) {
+		return A2(
+			$elm$core$List$any,
+			function (a) {
+				return _Utils_eq(a, x);
+			},
+			xs);
+	});
+var $elm$core$String$toLower = _String_toLower;
+var $author$project$Main$filterStation = F2(
+	function (search, station) {
+		return A2(
+			$elm$core$String$contains,
+			search,
+			$elm$core$String$toLower(station.name)) || A2($elm$core$List$member, search, station.categories);
+	});
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
+var $elm$json$Json$Encode$null = _Json_encodeNull;
+var $author$project$Main$playerPause = _Platform_outgoingPort(
+	'playerPause',
+	function ($) {
+		return $elm$json$Json$Encode$null;
+	});
+var $author$project$Main$playerPlay = _Platform_outgoingPort(
+	'playerPlay',
+	function ($) {
+		return $elm$json$Json$Encode$null;
+	});
 var $author$project$Main$stationsHttpResult = function (res) {
 	if (res.$ === 'Err') {
 		return _List_Nil;
@@ -6153,20 +6215,46 @@ var $author$project$Main$stationsHttpResult = function (res) {
 };
 var $author$project$Main$update = F2(
 	function (msg, model) {
-		var res = msg.a;
-		return _Utils_Tuple2(
-			_Utils_update(
-				model,
-				{
-					stations: $author$project$Main$stationsHttpResult(res)
-				}),
-			$elm$core$Platform$Cmd$none);
+		switch (msg.$) {
+			case 'RequestStationsResult':
+				var res = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							allStations: $author$project$Main$stationsHttpResult(res),
+							stations: $author$project$Main$stationsHttpResult(res)
+						}),
+					$elm$core$Platform$Cmd$none);
+			case 'PlayerPlay':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{playerState: $author$project$Main$Playing}),
+					$author$project$Main$playerPlay(_Utils_Tuple0));
+			case 'PlayerPause':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{playerState: $author$project$Main$Paused}),
+					$author$project$Main$playerPause(_Utils_Tuple0));
+			default:
+				var s = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							stations: A2(
+								$elm$core$List$filter,
+								$author$project$Main$filterStation(s),
+								model.allStations)
+						}),
+					$elm$core$Platform$Cmd$none);
+		}
 	});
-var $elm$html$Html$div = _VirtualDom_node('div');
-var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
-var $elm$html$Html$img = _VirtualDom_node('img');
-var $elm$html$Html$p = _VirtualDom_node('p');
+var $author$project$Main$SearchChanged = function (a) {
+	return {$: 'SearchChanged', a: a};
+};
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
@@ -6175,19 +6263,74 @@ var $elm$html$Html$Attributes$stringProperty = F2(
 			key,
 			$elm$json$Json$Encode$string(string));
 	});
+var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
+var $elm$html$Html$div = _VirtualDom_node('div');
+var $elm$html$Html$img = _VirtualDom_node('img');
+var $elm$html$Html$input = _VirtualDom_node('input');
+var $elm$html$Html$Events$alwaysStop = function (x) {
+	return _Utils_Tuple2(x, true);
+};
+var $elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
+	return {$: 'MayStopPropagation', a: a};
+};
+var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var $elm$html$Html$Events$stopPropagationOn = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$MayStopPropagation(decoder));
+	});
+var $elm$json$Json$Decode$at = F2(
+	function (fields, decoder) {
+		return A3($elm$core$List$foldr, $elm$json$Json$Decode$field, decoder, fields);
+	});
+var $elm$html$Html$Events$targetValue = A2(
+	$elm$json$Json$Decode$at,
+	_List_fromArray(
+		['target', 'value']),
+	$elm$json$Json$Decode$string);
+var $elm$html$Html$Events$onInput = function (tagger) {
+	return A2(
+		$elm$html$Html$Events$stopPropagationOn,
+		'input',
+		A2(
+			$elm$json$Json$Decode$map,
+			$elm$html$Html$Events$alwaysStop,
+			A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetValue)));
+};
 var $elm$html$Html$Attributes$src = function (url) {
 	return A2(
 		$elm$html$Html$Attributes$stringProperty,
 		'src',
 		_VirtualDom_noJavaScriptOrHtmlUri(url));
 };
-var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
-var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
-var $elm$html$Html$ul = _VirtualDom_node('ul');
-var $elm$html$Html$li = _VirtualDom_node('li');
+var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
+var $elm$html$Html$h2 = _VirtualDom_node('h2');
+var $elm$core$List$intersperse = F2(
+	function (sep, xs) {
+		if (!xs.b) {
+			return _List_Nil;
+		} else {
+			var hd = xs.a;
+			var tl = xs.b;
+			var step = F2(
+				function (x, rest) {
+					return A2(
+						$elm$core$List$cons,
+						sep,
+						A2($elm$core$List$cons, x, rest));
+				});
+			var spersed = A3($elm$core$List$foldr, step, _List_Nil, tl);
+			return A2($elm$core$List$cons, hd, spersed);
+		}
+	});
+var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
+var $elm$html$Html$span = _VirtualDom_node('span');
 var $author$project$Main$viewTag = function (tag) {
 	return A2(
-		$elm$html$Html$li,
+		$elm$html$Html$span,
 		_List_Nil,
 		_List_fromArray(
 			[
@@ -6197,46 +6340,116 @@ var $author$project$Main$viewTag = function (tag) {
 var $author$project$Main$viewStation = function (station) {
 	return A2(
 		$elm$html$Html$div,
-		_List_Nil,
 		_List_fromArray(
 			[
-				A2(
-				$elm$html$Html$p,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text(station.name)
-					])),
+				$elm$html$Html$Attributes$class('card')
+			]),
+		_List_fromArray(
+			[
 				A2(
 				$elm$html$Html$img,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$src('https:' + station.thumbnail),
-						A2($elm$html$Html$Attributes$style, 'width', '100px'),
-						A2($elm$html$Html$Attributes$style, 'height', '100px')
+						$elm$html$Html$Attributes$src('https:' + station.thumbnail)
 					]),
 				_List_Nil),
 				A2(
-				$elm$html$Html$ul,
-				_List_Nil,
-				A2($elm$core$List$map, $author$project$Main$viewTag, station.categories))
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('card-content')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$h2,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text(station.name)
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('tags')
+							]),
+						A2(
+							$elm$core$List$map,
+							$author$project$Main$viewTag,
+							A2($elm$core$List$intersperse, ' ● ', station.categories))),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('actions')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('play')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('► PLAY')
+									])),
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('love')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('❤ LOVE')
+									]))
+							]))
+					]))
 			]));
 };
 var $author$project$Main$view = function (state) {
 	return A2(
 		$elm$html$Html$div,
-		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('body')
+			]),
 		_List_fromArray(
 			[
 				A2(
 				$elm$html$Html$div,
-				_List_Nil,
-				_Utils_ap(
-					_List_fromArray(
-						[
-							$elm$html$Html$text('View')
-						]),
-					A2($elm$core$List$map, $author$project$Main$viewStation, state.stations)))
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('navbar')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$img,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$src('https://www.flaticon.com/svg/static/icons/svg/3111/3111899.svg')
+							]),
+						_List_Nil),
+						A2(
+						$elm$html$Html$input,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$type_('text'),
+								$elm$html$Html$Events$onInput($author$project$Main$SearchChanged)
+							]),
+						_List_Nil)
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('content')
+					]),
+				A2($elm$core$List$map, $author$project$Main$viewStation, state.stations))
 			]));
 };
 var $author$project$Main$main = $elm$browser$Browser$element(

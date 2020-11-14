@@ -1,0 +1,79 @@
+.card{
+    background-color: #F5F5F5;
+    margin: 10px;
+    width: 350px;
+    height: 70px;
+    padding: 10px;
+    border: 1px solid rgba(255,255,255,0.20);
+    border-radius: 10px;
+    box-shadow: 1px 1px 7px 0 rgba(217,210,200,0.51);
+    display: flex;
+    flex-direction: row;
+}
+.card > img{
+    width: 70px;
+    height: 70px;
+    border-radius: 3px;
+    background-color: #DEDDDD;
+    object-fit: contain;
+}
+.card-content{
+    display: flex;
+    flex-direction: column;
+    padding-left: 10px;
+    justify-content: flex-start;
+}
+.card-content > h2{
+    font-size: 17px;
+    margin: 0;
+    color: #444466;
+    cursor: pointer;
+}
+.card-content > h2:hover{
+}
+.tags{
+    line-height: 1;
+}
+.tags > span{
+    font-size: 13px;
+    font-weight: 900;
+    color: #9999AA;
+    line-height: 1;
+}
+.actions{
+    display: flex;
+    flex-direction: row;
+}
+.actions > div{
+    margin-top: 10px;
+    margin-right: 10px;
+    padding: 2px 8px;
+    font-size: 13px;
+    font-weight: 900;
+    background-color: #DEDDDD;
+    background-color: #E5E4E4;
+    border-radius: 5px;
+    color: #777777;
+    color: #AAAAAA;
+    cursor: pointer;
+}
+.play:hover{
+    background-color: #7db6ff;
+    color: white;
+    box-shadow: 0px 0px 10px -2px rgba(125,187,237,1);
+}
+.love:hover{
+    background-color: rgba(255,0,0,0.6);
+    color: white;
+    box-shadow: 0px 0px 10px -2px rgba(237,100,100,1);
+}
+.loadmore-button{
+    text-align: center;
+    cursor: pointer;
+    margin: 30px 0;
+    margin-bottom: 50px;
+    font-size: 18px;
+    font-weight: 900;
+    width: 100%;
+    color: #454568;
+}
