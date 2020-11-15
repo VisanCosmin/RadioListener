@@ -6130,7 +6130,12 @@ var $author$project$Main$stationDecoder = A5(
 		$elm$json$Json$Decode$list($elm$json$Json$Decode$string)));
 var $author$project$Main$init = function (_v0) {
 	return _Utils_Tuple2(
-		{allStations: _List_Nil, currentStation: $elm$core$Maybe$Nothing, playerState: $author$project$Main$Paused, stations: _List_Nil},
+		{
+			allStations: _List_Nil,
+			currentStation: {categories: _List_Nil, name: 'Select a station', stream: '', thumbnail: ''},
+			playerState: $author$project$Main$Paused,
+			stations: _List_Nil
+		},
 		$elm$http$Http$get(
 			{
 				expect: A2(
@@ -6238,7 +6243,7 @@ var $author$project$Main$update = F2(
 						model,
 						{playerState: $author$project$Main$Paused}),
 					$author$project$Main$playerPause(_Utils_Tuple0));
-			default:
+			case 'SearchChanged':
 				var s = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
@@ -6250,11 +6255,30 @@ var $author$project$Main$update = F2(
 								model.allStations)
 						}),
 					$elm$core$Platform$Cmd$none);
+			default:
+				var station = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{currentStation: station, playerState: $author$project$Main$Playing}),
+					$elm$core$Platform$Cmd$none);
 		}
 	});
+var $author$project$Main$PlayerPause = {$: 'PlayerPause'};
+var $author$project$Main$PlayerPlay = {$: 'PlayerPlay'};
 var $author$project$Main$SearchChanged = function (a) {
 	return {$: 'SearchChanged', a: a};
 };
+var $elm$html$Html$audio = _VirtualDom_node('audio');
+var $elm$json$Json$Encode$bool = _Json_wrap;
+var $elm$html$Html$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			$elm$json$Json$Encode$bool(bool));
+	});
+var $elm$html$Html$Attributes$autoplay = $elm$html$Html$Attributes$boolProperty('autoplay');
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
@@ -6265,15 +6289,35 @@ var $elm$html$Html$Attributes$stringProperty = F2(
 	});
 var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
 var $elm$html$Html$div = _VirtualDom_node('div');
+var $elm$html$Html$h2 = _VirtualDom_node('h2');
+var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
 var $elm$html$Html$img = _VirtualDom_node('img');
 var $elm$html$Html$input = _VirtualDom_node('input');
+var $elm$html$Html$Attributes$max = $elm$html$Html$Attributes$stringProperty('max');
+var $elm$html$Html$Attributes$min = $elm$html$Html$Attributes$stringProperty('min');
+var $elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var $elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var $elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		$elm$html$Html$Events$on,
+		'click',
+		$elm$json$Json$Decode$succeed(msg));
+};
 var $elm$html$Html$Events$alwaysStop = function (x) {
 	return _Utils_Tuple2(x, true);
 };
 var $elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
 	return {$: 'MayStopPropagation', a: a};
 };
-var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
 var $elm$html$Html$Events$stopPropagationOn = F2(
 	function (event, decoder) {
 		return A2(
@@ -6299,14 +6343,23 @@ var $elm$html$Html$Events$onInput = function (tagger) {
 			$elm$html$Html$Events$alwaysStop,
 			A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetValue)));
 };
+var $elm$html$Html$span = _VirtualDom_node('span');
 var $elm$html$Html$Attributes$src = function (url) {
 	return A2(
 		$elm$html$Html$Attributes$stringProperty,
 		'src',
 		_VirtualDom_noJavaScriptOrHtmlUri(url));
 };
+var $elm$html$Html$Attributes$step = function (n) {
+	return A2($elm$html$Html$Attributes$stringProperty, 'step', n);
+};
+var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
-var $elm$html$Html$h2 = _VirtualDom_node('h2');
+var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
+var $author$project$Main$ChangeStation = function (a) {
+	return {$: 'ChangeStation', a: a};
+};
 var $elm$core$List$intersperse = F2(
 	function (sep, xs) {
 		if (!xs.b) {
@@ -6325,9 +6378,7 @@ var $elm$core$List$intersperse = F2(
 			return A2($elm$core$List$cons, hd, spersed);
 		}
 	});
-var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
-var $elm$html$Html$span = _VirtualDom_node('span');
+var $elm$html$Html$Attributes$title = $elm$html$Html$Attributes$stringProperty('title');
 var $author$project$Main$viewTag = function (tag) {
 	return A2(
 		$elm$html$Html$span,
@@ -6337,79 +6388,89 @@ var $author$project$Main$viewTag = function (tag) {
 				$elm$html$Html$text(tag)
 			]));
 };
-var $author$project$Main$viewStation = function (station) {
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('card')
-			]),
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$img,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$src('https:' + station.thumbnail)
-					]),
-				_List_Nil),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('card-content')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$h2,
-						_List_Nil,
-						_List_fromArray(
-							[
-								$elm$html$Html$text(station.name)
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('tags')
-							]),
-						A2(
-							$elm$core$List$map,
-							$author$project$Main$viewTag,
-							A2($elm$core$List$intersperse, ' ● ', station.categories))),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('actions')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$div,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('play')
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('► PLAY')
-									])),
-								A2(
-								$elm$html$Html$div,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('love')
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('❤ LOVE')
-									]))
-							]))
-					]))
-			]));
-};
+var $author$project$Main$viewStation = F2(
+	function (currentStation, station) {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('card')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$img,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$src('https:' + station.thumbnail)
+						]),
+					_List_Nil),
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('card-content')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$h2,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$title(station.name)
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text(station.name)
+								])),
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('tags')
+								]),
+							A2(
+								$elm$core$List$map,
+								$author$project$Main$viewTag,
+								A2($elm$core$List$intersperse, ' ● ', station.categories))),
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('actions')
+								]),
+							_List_fromArray(
+								[
+									function () {
+									var playingClass = _Utils_eq(currentStation.name, station.name) ? 'play-selected' : '';
+									return A2(
+										$elm$html$Html$div,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('play'),
+												$elm$html$Html$Attributes$class(playingClass),
+												$elm$html$Html$Events$onClick(
+												$author$project$Main$ChangeStation(station))
+											]),
+										_List_fromArray(
+											[
+												$elm$html$Html$text('► PLAY')
+											]));
+								}(),
+									A2(
+									$elm$html$Html$div,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$class('love')
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text('❤ LOVE')
+										]))
+								]))
+						]))
+				]));
+	});
 var $author$project$Main$view = function (state) {
 	return A2(
 		$elm$html$Html$div,
@@ -6449,7 +6510,146 @@ var $author$project$Main$view = function (state) {
 					[
 						$elm$html$Html$Attributes$class('content')
 					]),
-				A2($elm$core$List$map, $author$project$Main$viewStation, state.stations))
+				A2(
+					$elm$core$List$map,
+					$author$project$Main$viewStation(state.currentStation),
+					state.stations)),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('sidebar')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('panel')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('favorite-stations')
+									]),
+								_List_fromArray(
+									[
+										A2(
+										$elm$html$Html$h2,
+										_List_Nil,
+										_List_fromArray(
+											[
+												$elm$html$Html$text('Favorite Stations')
+											])),
+										A2(
+										$elm$html$Html$div,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('stations-list')
+											]),
+										_List_Nil)
+									])),
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('player')
+									]),
+								_List_fromArray(
+									[
+										function () {
+										var _v0 = state.playerState;
+										if (_v0.$ === 'Playing') {
+											return A2(
+												$elm$html$Html$div,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$class('player-play'),
+														$elm$html$Html$Events$onClick($author$project$Main$PlayerPause)
+													]),
+												_List_fromArray(
+													[
+														A2(
+														$elm$html$Html$span,
+														_List_Nil,
+														_List_fromArray(
+															[
+																$elm$html$Html$text('❚❚')
+															]))
+													]));
+										} else {
+											return A2(
+												$elm$html$Html$div,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$class('player-play'),
+														$elm$html$Html$Events$onClick($author$project$Main$PlayerPlay)
+													]),
+												_List_fromArray(
+													[
+														A2(
+														$elm$html$Html$span,
+														_List_Nil,
+														_List_fromArray(
+															[
+																$elm$html$Html$text('►')
+															]))
+													]));
+										}
+									}(),
+										A2(
+										$elm$html$Html$audio,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$id('audio-player'),
+												$elm$html$Html$Attributes$src(state.currentStation.stream),
+												$elm$html$Html$Attributes$autoplay(true)
+											]),
+										_List_Nil),
+										A2(
+										$elm$html$Html$div,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('player-info')
+											]),
+										_List_fromArray(
+											[
+												A2(
+												$elm$html$Html$h2,
+												_List_Nil,
+												_List_fromArray(
+													[
+														$elm$html$Html$text(state.currentStation.name)
+													])),
+												A2(
+												$elm$html$Html$input,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$type_('range'),
+														$elm$html$Html$Attributes$min('0'),
+														$elm$html$Html$Attributes$max('1'),
+														$elm$html$Html$Attributes$value('1'),
+														$elm$html$Html$Attributes$step('0.05')
+													]),
+												_List_Nil)
+											])),
+										A2(
+										$elm$html$Html$div,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('player-favorite')
+											]),
+										_List_fromArray(
+											[
+												$elm$html$Html$text('❤')
+											]))
+									]))
+							]))
+					]))
 			]));
 };
 var $author$project$Main$main = $elm$browser$Browser$element(

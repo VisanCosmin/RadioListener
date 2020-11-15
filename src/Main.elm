@@ -26,7 +26,7 @@ type PlayerState = Playing | Paused
 type alias AppState = 
   { allStations : (List Station) 
   , stations : List Station
-  , currentStation : Maybe Station  
+  , currentStation : Station  
   , playerState : PlayerState
   }
 
@@ -35,6 +35,7 @@ type Msg = RequestStationsResult (Result Http.Error (List Station))
          | PlayerPlay
          | PlayerPause
          | SearchChanged String
+         | ChangeStation Station
 
 stationsHttpResult : Result Http.Error (List Station) -> List Station
 stationsHttpResult res =
@@ -45,7 +46,7 @@ stationsHttpResult res =
 init : () -> (AppState , Cmd Msg)
 init _ = ( { allStations = [] 
            , stations = [] 
-           , currentStation = Nothing 
+           , currentStation = { name = "Select a station" , stream = "" , categories = [] , thumbnail = ""} 
            , playerState = Paused 
            } 
          , Http.get
@@ -64,6 +65,7 @@ update msg model =
     PlayerPause -> ({model | playerState = Paused } , playerPause () )
     (SearchChanged s) -> ({model | stations = List.filter (filterStation s) model.allStations}
                          , Cmd.none)
+    (ChangeStation station) -> ({model | currentStation = station , playerState = Playing} , Cmd.none)
 
 
 view : AppState -> Html Msg
@@ -74,7 +76,26 @@ view state =
               , H.input [ HA.type_ "text" , HE.onInput SearchChanged ] []
               ] 
         , div [ HA.class "content"]
-              (List.map viewStation state.stations)
+              (List.map (viewStation state.currentStation) state.stations)
+        , div [ HA.class "sidebar"]
+              [ div [ HA.class "panel"]
+                    [ div [HA.class "favorite-stations"]
+                          [ H.h2 [] [text "Favorite Stations"]
+                          , div [ HA.class "stations-list" ] []
+                          ]
+                    , div [HA.class "player"]
+                          [ case state.playerState of 
+                              Playing -> div [HA.class "player-play" , onClick PlayerPause] [ H.span [] [text "❚❚"] ]
+                              Paused -> div [HA.class "player-play" , onClick PlayerPlay] [ H.span [] [text "►"] ] 
+                          , H.audio [ HA.id "audio-player" , HA.src state.currentStation.stream , HA.autoplay True ] []
+                          , div [HA.class "player-info"] 
+                                [ H.h2 [] [ text state.currentStation.name ]
+                                , H.input [HA.type_ "range" , HA.min "0" , HA.max "1" , HA.value "1" , HA.step "0.05" ] []
+                                ]
+                          , div [HA.class "player-favorite"] [text "❤"]
+                          ]
+                    ]
+              ]
         ]
 
 {-
@@ -96,16 +117,17 @@ view state =
 
 
 
-viewStation : Station -> Html Msg
-viewStation station = 
+viewStation : Station -> Station -> Html Msg
+viewStation currentStation station = 
   div [ HA.class "card" ]
       [ H.img [ HA.src ("https:" ++ station.thumbnail) ] []
       , div [ HA.class "card-content" ]
-            [ H.h2 [] [text station.name]
+            [ H.h2 [HA.title station.name] [text station.name]
             , div [ HA.class "tags"]
                   (List.map viewTag (List.intersperse " ● " station.categories))
             , div [ HA.class "actions" ]
-                  [ div [ HA.class "play" ] [text "► PLAY"]
+                  [ let playingClass = if (currentStation.name == station.name) then "play-selected" else "" 
+                    in div [ HA.class "play" , HA.class playingClass , onClick (ChangeStation station) ] [text "► PLAY"]
                   , div [ HA.class "love" ] [text "❤ LOVE"]
                   ]
             ]
