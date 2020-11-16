@@ -7,12 +7,15 @@ import Html.Attributes as HA
 import Html.Events exposing (onClick)
 import Http
 import Json.Decode exposing (Decoder)
+import Json.Encode exposing (Value)
+import Json.Encode as JE
 import Json.Decode as JD
 import String as S
 
 
 port playerPlay : () -> Cmd msg
 port playerPause : () -> Cmd msg
+port setStorage : Value -> Cmd msg
 
 main =
   Browser.element
@@ -28,6 +31,7 @@ type alias AppState =
   , stations : List Station
   , currentStation : Station  
   , playerState : PlayerState
+  , favoriteStations : List Station
   }
 
 
@@ -36,6 +40,7 @@ type Msg = RequestStationsResult (Result Http.Error (List Station))
          | PlayerPause
          | SearchChanged String
          | ChangeStation Station
+         | AddFavoriteStation Station
 
 stationsHttpResult : Result Http.Error (List Station) -> List Station
 stationsHttpResult res =
@@ -48,6 +53,7 @@ init _ = ( { allStations = []
            , stations = [] 
            , currentStation = { name = "Select a station" , stream = "" , categories = [] , thumbnail = ""} 
            , playerState = Paused 
+           , favoriteStations = []
            } 
          , Http.get
             { url = "https://visancosmin.github.io/RadioListener/stations.json"
@@ -66,6 +72,7 @@ update msg model =
     (SearchChanged s) -> ({model | stations = List.filter (filterStation s) model.allStations}
                          , Cmd.none)
     (ChangeStation station) -> ({model | currentStation = station , playerState = Playing} , Cmd.none)
+    (AddFavoriteStation station) -> ({model | favoriteStations = appendIfNotIn station model.favoriteStations } , Cmd.none)
 
 
 view : AppState -> Html Msg
@@ -76,12 +83,13 @@ view state =
               , H.input [ HA.type_ "text" , HE.onInput SearchChanged ] []
               ] 
         , div [ HA.class "content"]
-              (List.map (viewStation state.currentStation) state.stations)
+              (List.map (viewStation state.favoriteStations state.currentStation) state.stations)
         , div [ HA.class "sidebar"]
               [ div [ HA.class "panel"]
                     [ div [HA.class "favorite-stations"]
                           [ H.h2 [] [text "Favorite Stations"]
-                          , div [ HA.class "stations-list" ] []
+                          , div [ HA.class "stations-list" ] 
+                                (List.map (viewFavoriteStation state.currentStation) state.favoriteStations)
                           ]
                     , div [HA.class "player"]
                           [ case state.playerState of 
@@ -117,8 +125,8 @@ view state =
 
 
 
-viewStation : Station -> Station -> Html Msg
-viewStation currentStation station = 
+viewStation : List Station -> Station -> Station -> Html Msg
+viewStation favoriteStations currentStation station = 
   div [ HA.class "card" ]
       [ H.img [ HA.src ("https:" ++ station.thumbnail) ] []
       , div [ HA.class "card-content" ]
@@ -128,7 +136,8 @@ viewStation currentStation station =
             , div [ HA.class "actions" ]
                   [ let playingClass = if (currentStation.name == station.name) then "play-selected" else "" 
                     in div [ HA.class "play" , HA.class playingClass , onClick (ChangeStation station) ] [text "► PLAY"]
-                  , div [ HA.class "love" ] [text "❤ LOVE"]
+                  , let favoriteClass = if (List.member station favoriteStations) then "love-selected" else ""
+                    in div [ HA.class "love" , HA.class favoriteClass , onClick (AddFavoriteStation station) ] [text "❤ LOVE"]
                   ]
             ]
       ]
@@ -147,6 +156,15 @@ viewStation currentStation station =
 viewTag : String -> Html Msg 
 viewTag tag = H.span [] [ text tag ]
 
+viewFavoriteStation : Station -> Station -> Html Msg 
+viewFavoriteStation currentStation station = 
+  div [HA.class "favorite-item"]
+      [ H.img [ HA.src ("https:" ++ station.thumbnail) ] []
+      , H.h2 [] [text station.name]
+      , let playingClass = if (currentStation.name == station.name) then "play-selected" else ""
+        in div [ HA.class "play" , HA.class playingClass , onClick (ChangeStation station) ] [text "► PLAY"]
+      ]
+
 type alias Station = 
   { name : String 
   , stream : String 
@@ -163,3 +181,19 @@ stationDecoder = JD.map4 Station
   (JD.field "stream" JD.string)
   (JD.field "logo" JD.string)
   (JD.field "tags" (JD.list JD.string))
+
+stationEncoder : Station -> Value
+stationEncoder station = 
+  JE.object 
+    [ ("name" , JE.string station.name)
+    , ("stream" , JE.string station.stream)
+    , ("logo", JE.string station.thumbnail)
+    , ("tags" , JE.list JE.string station.categories)
+    ]
+
+
+appendIfNotIn : Station -> List Station -> List Station
+appendIfNotIn station list = 
+  if (List.member station list) == True 
+    then list 
+    else List.append list [station]

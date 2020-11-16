@@ -72,6 +72,10 @@
     color: white;
     box-shadow: 0px 0px 10px -2px rgba(237,100,100,1);
 }
+.love-selected{
+    background-color: rgba(255,0,0,0.6) !important;
+    color: white !important;
+}
 .loadmore-button{
     text-align: center;
     cursor: pointer;

@@ -6133,6 +6133,7 @@ var $author$project$Main$init = function (_v0) {
 		{
 			allStations: _List_Nil,
 			currentStation: {categories: _List_Nil, name: 'Select a station', stream: '', thumbnail: ''},
+			favoriteStations: _List_Nil,
 			playerState: $author$project$Main$Paused,
 			stations: _List_Nil
 		},
@@ -6148,16 +6149,13 @@ var $author$project$Main$init = function (_v0) {
 var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
 var $author$project$Main$Playing = {$: 'Playing'};
-var $elm$core$List$filter = F2(
-	function (isGood, list) {
-		return A3(
-			$elm$core$List$foldr,
-			F2(
-				function (x, xs) {
-					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
-				}),
-			_List_Nil,
-			list);
+var $elm$core$List$append = F2(
+	function (xs, ys) {
+		if (!ys.b) {
+			return xs;
+		} else {
+			return A3($elm$core$List$foldr, $elm$core$List$cons, ys, xs);
+		}
 	});
 var $elm$core$List$any = F2(
 	function (isOkay, list) {
@@ -6188,6 +6186,25 @@ var $elm$core$List$member = F2(
 				return _Utils_eq(a, x);
 			},
 			xs);
+	});
+var $author$project$Main$appendIfNotIn = F2(
+	function (station, list) {
+		return A2($elm$core$List$member, station, list) ? list : A2(
+			$elm$core$List$append,
+			list,
+			_List_fromArray(
+				[station]));
+	});
+var $elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			$elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
 	});
 var $elm$core$String$toLower = _String_toLower;
 var $author$project$Main$filterStation = F2(
@@ -6255,12 +6272,21 @@ var $author$project$Main$update = F2(
 								model.allStations)
 						}),
 					$elm$core$Platform$Cmd$none);
-			default:
+			case 'ChangeStation':
 				var station = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{currentStation: station, playerState: $author$project$Main$Playing}),
+					$elm$core$Platform$Cmd$none);
+			default:
+				var station = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							favoriteStations: A2($author$project$Main$appendIfNotIn, station, model.favoriteStations)
+						}),
 					$elm$core$Platform$Cmd$none);
 		}
 	});
@@ -6360,6 +6386,51 @@ var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('
 var $author$project$Main$ChangeStation = function (a) {
 	return {$: 'ChangeStation', a: a};
 };
+var $author$project$Main$viewFavoriteStation = F2(
+	function (currentStation, station) {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('favorite-item')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$img,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$src('https:' + station.thumbnail)
+						]),
+					_List_Nil),
+					A2(
+					$elm$html$Html$h2,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text(station.name)
+						])),
+					function () {
+					var playingClass = _Utils_eq(currentStation.name, station.name) ? 'play-selected' : '';
+					return A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('play'),
+								$elm$html$Html$Attributes$class(playingClass),
+								$elm$html$Html$Events$onClick(
+								$author$project$Main$ChangeStation(station))
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('► PLAY')
+							]));
+				}()
+				]));
+	});
+var $author$project$Main$AddFavoriteStation = function (a) {
+	return {$: 'AddFavoriteStation', a: a};
+};
 var $elm$core$List$intersperse = F2(
 	function (sep, xs) {
 		if (!xs.b) {
@@ -6388,8 +6459,8 @@ var $author$project$Main$viewTag = function (tag) {
 				$elm$html$Html$text(tag)
 			]));
 };
-var $author$project$Main$viewStation = F2(
-	function (currentStation, station) {
+var $author$project$Main$viewStation = F3(
+	function (favoriteStations, currentStation, station) {
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
@@ -6457,16 +6528,22 @@ var $author$project$Main$viewStation = F2(
 												$elm$html$Html$text('► PLAY')
 											]));
 								}(),
-									A2(
-									$elm$html$Html$div,
-									_List_fromArray(
-										[
-											$elm$html$Html$Attributes$class('love')
-										]),
-									_List_fromArray(
-										[
-											$elm$html$Html$text('❤ LOVE')
-										]))
+									function () {
+									var favoriteClass = A2($elm$core$List$member, station, favoriteStations) ? 'love-selected' : '';
+									return A2(
+										$elm$html$Html$div,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('love'),
+												$elm$html$Html$Attributes$class(favoriteClass),
+												$elm$html$Html$Events$onClick(
+												$author$project$Main$AddFavoriteStation(station))
+											]),
+										_List_fromArray(
+											[
+												$elm$html$Html$text('❤ LOVE')
+											]));
+								}()
 								]))
 						]))
 				]));
@@ -6512,7 +6589,7 @@ var $author$project$Main$view = function (state) {
 					]),
 				A2(
 					$elm$core$List$map,
-					$author$project$Main$viewStation(state.currentStation),
+					A2($author$project$Main$viewStation, state.favoriteStations, state.currentStation),
 					state.stations)),
 				A2(
 				$elm$html$Html$div,
@@ -6551,7 +6628,10 @@ var $author$project$Main$view = function (state) {
 											[
 												$elm$html$Html$Attributes$class('stations-list')
 											]),
-										_List_Nil)
+										A2(
+											$elm$core$List$map,
+											$author$project$Main$viewFavoriteStation(state.currentStation),
+											state.favoriteStations))
 									])),
 								A2(
 								$elm$html$Html$div,
