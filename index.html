@@ -2,7 +2,8 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>Main</title>
+        <title>Radio Listener</title>
+        <link rel="icon" href="static/favicon.ico" type="image/x-icon"/>
         <link rel="stylesheet" href="static/main.css">
         <link rel="stylesheet" href="static/card.css">
         <link rel="stylesheet" href="static/sidebar.css">
@@ -13,9 +14,10 @@
     <body>
         <pre id="elm-node"></pre>
         <script>
+            var local = localStorage.getItem("radio-listener-state");
             var app = Elm.Main.init({
                 node: document.getElementById("elm-node") ,
-                flags: localStorage.getItem("radio-listener-state")
+                flags: local ? JSON.parse(local) : []
             });
 
             app.ports.playerPlay.subscribe(function() {
@@ -31,6 +33,12 @@
             app.ports.setStorage.subscribe(function(state) {
                 localStorage.setItem('radio-listener-state', JSON.stringify(state));
             });
+
+            app.ports.playerVolume.subscribe(function(volume) {
+                var audio = document.getElementById("audio-player");
+                audio.volume = volume;
+            });
+
         </script>
     </body>
 </html>

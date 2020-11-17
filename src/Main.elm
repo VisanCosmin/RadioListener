@@ -16,6 +16,7 @@ import String as S
 port playerPlay : () -> Cmd msg
 port playerPause : () -> Cmd msg
 port setStorage : Value -> Cmd msg
+port playerVolume : String -> Cmd msg
 
 main =
   Browser.element
@@ -32,6 +33,7 @@ type alias AppState =
   , currentStation : Station  
   , playerState : PlayerState
   , favoriteStations : List Station
+  , playerVolume : String
   }
 
 
@@ -40,7 +42,8 @@ type Msg = RequestStationsResult (Result Http.Error (List Station))
          | PlayerPause
          | SearchChanged String
          | ChangeStation Station
-         | AddFavoriteStation Station
+         | AddRemoveFavoriteStation Station
+         | ChangeVolume String
 
 stationsHttpResult : Result Http.Error (List Station) -> List Station
 stationsHttpResult res =
@@ -48,12 +51,16 @@ stationsHttpResult res =
     (Err _) -> [] 
     (Ok s) -> s
 
-init : () -> (AppState , Cmd Msg)
-init _ = ( { allStations = [] 
+init : Value -> (AppState , Cmd Msg)
+init jsonFavorite = 
+           ( { allStations = [] 
            , stations = [] 
            , currentStation = { name = "Select a station" , stream = "" , categories = [] , thumbnail = ""} 
            , playerState = Paused 
-           , favoriteStations = []
+           , favoriteStations = case (JD.decodeValue (JD.list stationDecoder) jsonFavorite) of
+                                          (Err _) -> []
+                                          (Ok s) -> s  
+           , playerVolume = "0.5"
            } 
          , Http.get
             { url = "https://visancosmin.github.io/RadioListener/stations.json"
@@ -72,8 +79,10 @@ update msg model =
     (SearchChanged s) -> ({model | stations = List.filter (filterStation s) model.allStations}
                          , Cmd.none)
     (ChangeStation station) -> ({model | currentStation = station , playerState = Playing} , Cmd.none)
-    (AddFavoriteStation station) -> ({model | favoriteStations = appendIfNotIn station model.favoriteStations } , Cmd.none)
-
+    (AddRemoveFavoriteStation station) -> 
+      let newFavoriteStations = appendIfNotIn station model.favoriteStations
+      in ({model | favoriteStations = newFavoriteStations } , setStorage ((JE.list stationEncoder) newFavoriteStations))
+    (ChangeVolume volume) -> ({model | playerVolume = volume} , playerVolume volume)
 
 view : AppState -> Html Msg
 view state =
@@ -98,7 +107,7 @@ view state =
                           , H.audio [ HA.id "audio-player" , HA.src state.currentStation.stream , HA.autoplay True ] []
                           , div [HA.class "player-info"] 
                                 [ H.h2 [] [ text state.currentStation.name ]
-                                , H.input [HA.type_ "range" , HA.min "0" , HA.max "1" , HA.value "1" , HA.step "0.05" ] []
+                                , H.input [HA.type_ "range" , HA.min "0" , HA.max "1" , HA.value state.playerVolume , HA.step "0.05" , HE.onInput ChangeVolume ] []
                                 ]
                           , div [HA.class "player-favorite"] [text "❤"]
                           ]
@@ -137,7 +146,7 @@ viewStation favoriteStations currentStation station =
                   [ let playingClass = if (currentStation.name == station.name) then "play-selected" else "" 
                     in div [ HA.class "play" , HA.class playingClass , onClick (ChangeStation station) ] [text "► PLAY"]
                   , let favoriteClass = if (List.member station favoriteStations) then "love-selected" else ""
-                    in div [ HA.class "love" , HA.class favoriteClass , onClick (AddFavoriteStation station) ] [text "❤ LOVE"]
+                    in div [ HA.class "love" , HA.class favoriteClass , onClick (AddRemoveFavoriteStation station) ] [text "❤ LOVE"]
                   ]
             ]
       ]
@@ -195,5 +204,5 @@ stationEncoder station =
 appendIfNotIn : Station -> List Station -> List Station
 appendIfNotIn station list = 
   if (List.member station list) == True 
-    then list 
+    then List.filter ((/=) station) list 
     else List.append list [station]

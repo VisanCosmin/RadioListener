@@ -5323,6 +5323,7 @@ var $author$project$Main$Paused = {$: 'Paused'};
 var $author$project$Main$RequestStationsResult = function (a) {
 	return {$: 'RequestStationsResult', a: a};
 };
+var $elm$json$Json$Decode$decodeValue = _Json_run;
 var $elm$json$Json$Decode$decodeString = _Json_runOnString;
 var $elm$http$Http$BadStatus_ = F2(
 	function (a, b) {
@@ -6128,13 +6129,25 @@ var $author$project$Main$stationDecoder = A5(
 		$elm$json$Json$Decode$field,
 		'tags',
 		$elm$json$Json$Decode$list($elm$json$Json$Decode$string)));
-var $author$project$Main$init = function (_v0) {
+var $author$project$Main$init = function (jsonFavorite) {
 	return _Utils_Tuple2(
 		{
 			allStations: _List_Nil,
 			currentStation: {categories: _List_Nil, name: 'Select a station', stream: '', thumbnail: ''},
-			favoriteStations: _List_Nil,
+			favoriteStations: function () {
+				var _v0 = A2(
+					$elm$json$Json$Decode$decodeValue,
+					$elm$json$Json$Decode$list($author$project$Main$stationDecoder),
+					jsonFavorite);
+				if (_v0.$ === 'Err') {
+					return _List_Nil;
+				} else {
+					var s = _v0.a;
+					return s;
+				}
+			}(),
 			playerState: $author$project$Main$Paused,
+			playerVolume: '0.5',
 			stations: _List_Nil
 		},
 		$elm$http$Http$get(
@@ -6156,6 +6169,17 @@ var $elm$core$List$append = F2(
 		} else {
 			return A3($elm$core$List$foldr, $elm$core$List$cons, ys, xs);
 		}
+	});
+var $elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			$elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
 	});
 var $elm$core$List$any = F2(
 	function (isOkay, list) {
@@ -6187,24 +6211,17 @@ var $elm$core$List$member = F2(
 			},
 			xs);
 	});
+var $elm$core$Basics$neq = _Utils_notEqual;
 var $author$project$Main$appendIfNotIn = F2(
 	function (station, list) {
-		return A2($elm$core$List$member, station, list) ? list : A2(
+		return A2($elm$core$List$member, station, list) ? A2(
+			$elm$core$List$filter,
+			$elm$core$Basics$neq(station),
+			list) : A2(
 			$elm$core$List$append,
 			list,
 			_List_fromArray(
 				[station]));
-	});
-var $elm$core$List$filter = F2(
-	function (isGood, list) {
-		return A3(
-			$elm$core$List$foldr,
-			F2(
-				function (x, xs) {
-					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
-				}),
-			_List_Nil,
-			list);
 	});
 var $elm$core$String$toLower = _String_toLower;
 var $author$project$Main$filterStation = F2(
@@ -6213,6 +6230,15 @@ var $author$project$Main$filterStation = F2(
 			$elm$core$String$contains,
 			search,
 			$elm$core$String$toLower(station.name)) || A2($elm$core$List$member, search, station.categories);
+	});
+var $elm$json$Json$Encode$list = F2(
+	function (func, entries) {
+		return _Json_wrap(
+			A3(
+				$elm$core$List$foldl,
+				_Json_addEntry(func),
+				_Json_emptyArray(_Utils_Tuple0),
+				entries));
 	});
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
@@ -6227,6 +6253,40 @@ var $author$project$Main$playerPlay = _Platform_outgoingPort(
 	function ($) {
 		return $elm$json$Json$Encode$null;
 	});
+var $elm$json$Json$Encode$string = _Json_wrap;
+var $author$project$Main$playerVolume = _Platform_outgoingPort('playerVolume', $elm$json$Json$Encode$string);
+var $author$project$Main$setStorage = _Platform_outgoingPort('setStorage', $elm$core$Basics$identity);
+var $elm$json$Json$Encode$object = function (pairs) {
+	return _Json_wrap(
+		A3(
+			$elm$core$List$foldl,
+			F2(
+				function (_v0, obj) {
+					var k = _v0.a;
+					var v = _v0.b;
+					return A3(_Json_addField, k, v, obj);
+				}),
+			_Json_emptyObject(_Utils_Tuple0),
+			pairs));
+};
+var $author$project$Main$stationEncoder = function (station) {
+	return $elm$json$Json$Encode$object(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'name',
+				$elm$json$Json$Encode$string(station.name)),
+				_Utils_Tuple2(
+				'stream',
+				$elm$json$Json$Encode$string(station.stream)),
+				_Utils_Tuple2(
+				'logo',
+				$elm$json$Json$Encode$string(station.thumbnail)),
+				_Utils_Tuple2(
+				'tags',
+				A2($elm$json$Json$Encode$list, $elm$json$Json$Encode$string, station.categories))
+			]));
+};
 var $author$project$Main$stationsHttpResult = function (res) {
 	if (res.$ === 'Err') {
 		return _List_Nil;
@@ -6279,17 +6339,28 @@ var $author$project$Main$update = F2(
 						model,
 						{currentStation: station, playerState: $author$project$Main$Playing}),
 					$elm$core$Platform$Cmd$none);
-			default:
+			case 'AddRemoveFavoriteStation':
 				var station = msg.a;
+				var newFavoriteStations = A2($author$project$Main$appendIfNotIn, station, model.favoriteStations);
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{
-							favoriteStations: A2($author$project$Main$appendIfNotIn, station, model.favoriteStations)
-						}),
-					$elm$core$Platform$Cmd$none);
+						{favoriteStations: newFavoriteStations}),
+					$author$project$Main$setStorage(
+						$elm$json$Json$Encode$list($author$project$Main$stationEncoder)(newFavoriteStations)));
+			default:
+				var volume = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{playerVolume: volume}),
+					$author$project$Main$playerVolume(volume));
 		}
 	});
+var $elm$json$Json$Decode$value = _Json_decodeValue;
+var $author$project$Main$ChangeVolume = function (a) {
+	return {$: 'ChangeVolume', a: a};
+};
 var $author$project$Main$PlayerPause = {$: 'PlayerPause'};
 var $author$project$Main$PlayerPlay = {$: 'PlayerPlay'};
 var $author$project$Main$SearchChanged = function (a) {
@@ -6305,7 +6376,6 @@ var $elm$html$Html$Attributes$boolProperty = F2(
 			$elm$json$Json$Encode$bool(bool));
 	});
 var $elm$html$Html$Attributes$autoplay = $elm$html$Html$Attributes$boolProperty('autoplay');
-var $elm$json$Json$Encode$string = _Json_wrap;
 var $elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
 		return A2(
@@ -6428,8 +6498,8 @@ var $author$project$Main$viewFavoriteStation = F2(
 				}()
 				]));
 	});
-var $author$project$Main$AddFavoriteStation = function (a) {
-	return {$: 'AddFavoriteStation', a: a};
+var $author$project$Main$AddRemoveFavoriteStation = function (a) {
+	return {$: 'AddRemoveFavoriteStation', a: a};
 };
 var $elm$core$List$intersperse = F2(
 	function (sep, xs) {
@@ -6537,7 +6607,7 @@ var $author$project$Main$viewStation = F3(
 												$elm$html$Html$Attributes$class('love'),
 												$elm$html$Html$Attributes$class(favoriteClass),
 												$elm$html$Html$Events$onClick(
-												$author$project$Main$AddFavoriteStation(station))
+												$author$project$Main$AddRemoveFavoriteStation(station))
 											]),
 										_List_fromArray(
 											[
@@ -6712,8 +6782,9 @@ var $author$project$Main$view = function (state) {
 														$elm$html$Html$Attributes$type_('range'),
 														$elm$html$Html$Attributes$min('0'),
 														$elm$html$Html$Attributes$max('1'),
-														$elm$html$Html$Attributes$value('1'),
-														$elm$html$Html$Attributes$step('0.05')
+														$elm$html$Html$Attributes$value(state.playerVolume),
+														$elm$html$Html$Attributes$step('0.05'),
+														$elm$html$Html$Events$onInput($author$project$Main$ChangeVolume)
 													]),
 												_List_Nil)
 											])),
@@ -6741,5 +6812,4 @@ var $author$project$Main$main = $elm$browser$Browser$element(
 		update: $author$project$Main$update,
 		view: $author$project$Main$view
 	});
-_Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))(0)}});}(this));
+_Platform_export({'Main':{'init':$author$project$Main$main($elm$json$Json$Decode$value)(0)}});}(this));
