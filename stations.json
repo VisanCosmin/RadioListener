@@ -75,7 +75,7 @@
       ]
    },
    {
-      "stream":"https://onlineradiobox.com/json/ro/digifm/play?platform=web",
+      "stream":"http://edge76.rdsnet.ro:84/digifm/digifm.mp3",
       "name":"Digi FM",
       "logo":"//cdn.onlineradiobox.com/img/logo/7/19147.v3.png",
       "tags":[

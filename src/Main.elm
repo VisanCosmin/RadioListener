@@ -63,7 +63,7 @@ init jsonFavorite =
            , playerVolume = "0.5"
            } 
          , Http.get
-            { url = "https://visancosmin.github.io/RadioListener/stations.json"
+            { url = "http://www.radiolistener.net/stations.json"
             , expect = Http.expectJson RequestStationsResult (JD.list stationDecoder)
             } 
          )
