@@ -6156,7 +6156,7 @@ var $author$project$Main$init = function (jsonFavorite) {
 					$elm$http$Http$expectJson,
 					$author$project$Main$RequestStationsResult,
 					$elm$json$Json$Decode$list($author$project$Main$stationDecoder)),
-				url: 'https://radiolistener.net/stations.json'
+				url: 'https://visancosmin.github.io/RadioListener/stations.json'
 			}));
 };
 var $elm$core$Platform$Sub$batch = _Platform_batch;
